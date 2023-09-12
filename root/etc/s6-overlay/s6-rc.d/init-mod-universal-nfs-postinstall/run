@@ -1,7 +1,7 @@
 #!/usr/bin/with-contenv bash
 
-if [[ -z "${MOD_NFS_MOUNTS}" ]]; then
-  for MOUNT in $MOUNTS
+if ! [[ -z "${MOD_NFS_MOUNTS}" ]]; then
+  for MOUNT in $MOD_NFS_MOUNTS
   do
       ORIGIN=${MOUNT%,*}
       DESTINATION=${MOUNT#*,}
