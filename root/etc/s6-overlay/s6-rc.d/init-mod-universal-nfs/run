@@ -1,0 +1,17 @@
+#!/usr/bin/with-contenv bash
+
+## Ubuntu
+if [ -f /usr/bin/apt ]; then
+    if ! [[ $(apt -qq list nfs-common) ]]; then
+        echo "\
+            nfs-common" >> /mod-repo-packages-to-install.list
+    fi
+
+fi
+# Alpine
+if [ -f /sbin/apk ]; then
+    if ! [[ $(apk -e info nfs-utils) ]]; then
+        echo "\
+            nfs-utils" >> /mod-repo-packages-to-install.list
+    fi
+fi

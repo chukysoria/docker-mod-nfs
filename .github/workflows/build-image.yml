@@ -1,0 +1,57 @@
+name: Build Image
+
+on:
+  release:
+    types: [published]
+  push:
+
+env:
+  IMAGE: "linuxserver-mod-nfs"
+  USER: "chukysoria"
+  NOW:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set current date as env variable
+        run: echo "NOW=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
+
+      - name: Login to Github Container Repo
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          # list of Docker images to use as base name for tags
+          images: |
+              ghcr.io/${{ env.USER }}/${{ env.IMAGE }}            
+          # generate Docker tags based on the following events/attributes
+          flavor: 
+            latest=true
+          tags: |
+            type=sha,prefix=,suffix=-${{ github.ref_name }}    
+          labels: |
+            org.opencontainers.image.created=${{ env.NOW }}
+            org.opencontainers.image.authors=Carlos Sanchez
+            org.opencontainers.image.url=https://github.com/${{ env.USER }}/docker-mod/packages
+            org.opencontainers.image.source=https://github.com/chukysoria/docker-mod
+            org.opencontainers.image.version=${{ github.ref_name }}
+            org.opencontainers.image.revision=${{ github.sha }}
+            org.opencontainers.image.vendor=Carlos Sanchez
+            org.opencontainers.image.licenses=GPL-3.0-only
+            org.opencontainers.image.ref.name=${{ github.sha }}
+            org.opencontainers.image.title=${{ env.IMAGE }}  
+
+      - name: Build and push
+        uses: docker/build-push-action@v4
+        with:
+          push: ${{ github.event_name == 'release' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          pull: true

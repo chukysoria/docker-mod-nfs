@@ -1,0 +1,12 @@
+#!/usr/bin/with-contenv bash
+
+if [[ -z "${MOD_NFS_MOUNTS}" ]]; then
+  for MOUNT in $MOUNTS
+  do
+      ORIGIN=${MOUNT%,*}
+      DESTINATION=${MOUNT#*,}
+      echo "[mod-nfs] Mounting ${ORIGIN} into ${DESTINATION}"
+      mkdir -p $DESTINATION
+      mount -t nfs -o nolock $ORIGIN $DESTINATION
+  done
+fi
