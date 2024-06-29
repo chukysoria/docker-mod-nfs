@@ -1,0 +1,8 @@
+---
+image: linuxserver-mod-nfs
+version: v1.0.0
+name: linuxserver-mod-nfs
+description: "Allows to map nfs shares on the containers."
+ext_release: v1.0.0
+arch:
+  - all
